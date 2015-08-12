@@ -1,0 +1,42 @@
+[
+    {
+        "name": "Span",
+        "number": "2",
+        "position": "CF"
+    },
+    {
+        "name": "Escobar",
+        "number": "5",
+        "position": "3B"
+    },
+    {
+        "name": "Harper",
+        "number": "34",
+        "position": "RF"
+    },
+    {
+        "name": "Rendon",
+        "number": "6",
+        "position": "2B"
+    },
+    {
+        "name": "Ramos",
+        "number": "40",
+        "position": "C"
+    },
+    {
+        "name": "Desmond",
+        "number": "20",
+        "position": "SS"
+    },
+    {
+        "name": "Moore",
+        "number": "12",
+        "position": "1B"
+    },
+    {
+        "name": "Taylor",
+        "number": "3",
+        "position": "LF"
+    }
+]

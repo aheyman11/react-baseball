@@ -1,0 +1,139 @@
+<!-- index.html -->
+<html>
+  <head>
+    <title>Scorekeeping</title>
+    <script src="https://fb.me/react-0.13.3.js"></script>
+    <script src="https://fb.me/JSXTransformer-0.13.3.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+  </head>
+  <body>
+    <div id="content"></div>
+    <script type="text/jsx">
+      var ScoreBook = React.createClass({
+        //Makes a call to the server, loads comments from server into this.state.data
+        loadPlayersFromServer: function() {
+          $.ajax({
+          url: this.props.url,
+          dataType: 'json',
+          cache: false,
+          success: function(data) {
+            this.setState({data: data}); //Merges old array of comments with new one from server
+            }.bind(this),
+          error: function(xhr, status, err) {
+            console.error(this.props.url, status, err.toString());
+            }.bind(this)
+          });
+        },
+        //Submits to the server and refreshes the list
+        handlePlayerSubmit: function(player) {
+          //Optimistic update: displays new comment before saving it on server
+          var players = this.state.data;
+          var newPlayers = players.concat([player]);
+          this.setState({data: newPlayers});
+          //Call to server
+          $.ajax({
+          url: this.props.url,
+          dataType: 'json',
+          type: 'POST',
+          data: player,
+          success: function(data) {
+            this.setState({data: data}); //Replaces old array of comments with new one from server
+          }.bind(this),
+          error: function(xhr, status, err) {
+            console.error(this.props.url, status, err.toString());
+          }.bind(this)
+          });
+        },
+        //Executes exactly once and sets up initial state of the component
+        getInitialState: function() {
+          return {data: []}; //Adds array of comment data as a state
+        },
+        //Called automatically by React when component is rendered
+        componentDidMount: function() {
+          this.loadPlayersFromServer();
+          setInterval(this.loadPlayersFromServer, this.props.pollInterval);
+        },
+        render: function() {
+          return (
+            <div className="Lineup">
+              <h1>Lineup</h1>
+              <PlayerList data={this.state.data} /> {/* Feeds CommentList component the data from the CommentBox component (which comes from server) */}
+              <PlayerForm onPlayerSubmit={this.handlePlayerSubmit} /> {/* Tells CommentList component to use CommentBox's handleCommentSubmit method on comment submits. */}
+            </div>
+          );
+        }
+      });
+
+    var PlayerList = React.createClass({
+      render: function() {
+        //Dynamically renders the comments from this.props.data. Note: CommentList stores data as props, whereas CommentBox stores it as state. State can be modified (coming from server).
+        var playerNodes = this.props.data.map(function (player) {
+          //From JSON file, comment has two keys, "author" and "text"
+          return (
+            <Player name={player.name} number = {player.number} position = {player.position}> //Creates Comment component with author comment.author. Creation of Comment object displays the author.
+            //{player.number} Displays comment.text
+            //{player.position}
+            </Player>
+          );
+        });
+      return (
+        <div className="playerList">
+          {playerNodes} {/* Displays all comments */}
+        </div>
+        );
+    }
+    });
+
+  var PlayerForm = React.createClass({
+      handleSubmit: function(e) {
+        e.preventDefault();
+        var name = React.findDOMNode(this.refs.name).value.trim(); //Gets author from user input
+        var number = React.findDOMNode(this.refs.number).value.trim(); //Gets text from user input
+        var position = React.findDOMNode(this.refs.position).value.trim();
+       if (!name || !number || !position) {
+          return;
+        }
+      this.props.onPlayerSubmit({name:name, number:number, position:position}); //Calls onCommentSubmit method, which is fed into it when CommentBox is rendered. onCommentSubmit is set to be CommentBox's handleCommentSubmit method.
+      React.findDOMNode(this.refs.name).value = ''; //Resets author
+      React.findDOMNode(this.refs.number).value = ''; //Resets text
+      React.findDOMNode(this.refs.position).value = '';
+      return;
+    },
+    render: function() {
+    return (
+      <form className="playerForm" onSubmit={this.handleSubmit}>
+        <input type="text" placeholder="Player name" ref="name" />
+        <input type="text" placeholder="Number" ref="number" />
+        <input type="text" placeholder="Position" ref="position" />
+        <input type="submit" value="Post" />
+      </form>
+      );
+    }
+    });
+    
+  //Has two properties: author, which stores comment author, and children, which stores the message.
+  var Player = React.createClass({
+    render: function() {
+      var rawMarkup1 = marked(this.props.number.toString(), {sanitize: true});
+      var rawMarkup2 = marked(this.props.position.toString(), {sanitize: true});
+      return (
+        <div className="player">
+          <h2 className="playerName">
+            {this.props.name} {/* Displays comment author */}
+          </h2>
+          <span dangerouslySetInnerHTML={{__html: rawMarkup1}} />
+          <span dangerouslySetInnerHTML={{__html: rawMarkup2}} />
+        </div>
+      );
+    }
+  });
+
+    React.render(
+      //URL to fetch data from server
+      <ScoreBook url="players.json" pollInterval={20000} />,
+      document.getElementById('content')
+    );
+    </script>
+  </body>
+</html>
