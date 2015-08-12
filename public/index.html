@@ -71,7 +71,7 @@
         var playerNodes = this.props.data.map(function (player) {
           //From JSON file, comment has two keys, "author" and "text"
           return (
-            <Player name={player.name} number = {player.number} position = {player.position}> //Creates Comment component with author comment.author. Creation of Comment object displays the author.
+            <Player name={player.name} number = {player.number} position = {player.position}> //Creates Player component. Creation of Player object displays player on the score card.
             //{player.number} Displays comment.text
             //{player.position}
             </Player>
@@ -94,7 +94,7 @@
        if (!name || !number || !position) {
           return;
         }
-      this.props.onPlayerSubmit({name:name, number:number, position:position}); //Calls onCommentSubmit method, which is fed into it when CommentBox is rendered. onCommentSubmit is set to be CommentBox's handleCommentSubmit method.
+      this.props.onPlayerSubmit({name:name, number:number, position:position}); //Calls onPlayerSubmit method, which is fed into it when ScoreBook is rendered. onPlayerSubmit is set to be ScoreBook's handlePlayerSubmit method.
       React.findDOMNode(this.refs.name).value = ''; //Resets author
       React.findDOMNode(this.refs.number).value = ''; //Resets text
       React.findDOMNode(this.refs.position).value = '';
@@ -119,11 +119,12 @@
       var rawMarkup2 = marked(this.props.position.toString(), {sanitize: true});
       return (
         <div className="player">
-          <h2 className="playerName">
-            {this.props.name} {/* Displays comment author */}
-          </h2>
-          <span dangerouslySetInnerHTML={{__html: rawMarkup1}} />
-          <span dangerouslySetInnerHTML={{__html: rawMarkup2}} />
+          <table style = "width:30%">
+          <tr>
+            <td className = "playerName"> {this.props.name} {/*Displays player name*/} </td>
+            <td> <span dangerouslySetInnerHTML={{__html: rawMarkup1}} /> </td>
+            <td> <span dangerouslySetInnerHTML={{__html: rawMarkup2}} /> </td>
+          </tr>
         </div>
       );
     }
