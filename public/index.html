@@ -11,6 +11,8 @@
     <div id="content"></div>
     <script type="text/jsx">
       var ScoreBook = React.createClass({
+        // @props = url, pollInterval
+        // @state = data (stores a list of "Players")
         //Makes a call to the server, loads comments from server into this.state.data
         loadPlayersFromServer: function() {
           $.ajax({
@@ -66,10 +68,12 @@
       });
 
     var PlayerList = React.createClass({
+      // @props = data (a list of "Players")
+      // @state = None
       render: function() {
         //Dynamically renders the comments from this.props.data. Note: CommentList stores data as props, whereas CommentBox stores it as state. State can be modified (coming from server).
         var playerNodes = this.props.data.map(function (player) {
-          //From JSON file, comment has two keys, "author" and "text"
+          //From JSON file, player has three keys, "name," "number," and "position"
           return (
             <Player name={player.name} number = {player.number} position = {player.position}> //Creates Player component. Creation of Player object displays player on the score card.
             //{player.number} Displays comment.text
@@ -78,14 +82,16 @@
           );
         });
       return (
-        <div className="playerList">
+        <div className="playerList"> <table >
           {playerNodes} {/* Displays all comments */}
-        </div>
+        </table> </div>
         );
     }
     });
 
   var PlayerForm = React.createClass({
+      // @props = onPlayerSubmit (a function)
+      // @state = None
       handleSubmit: function(e) {
         e.preventDefault();
         var name = React.findDOMNode(this.refs.name).value.trim(); //Gets author from user input
@@ -94,7 +100,7 @@
        if (!name || !number || !position) {
           return;
         }
-      this.props.onPlayerSubmit({name:name, number:number, position:position}); //Calls onPlayerSubmit method, which is fed into it when ScoreBook is rendered. onPlayerSubmit is set to be ScoreBook's handlePlayerSubmit method.
+      this.props.onPlayerSubmit({"name":name, "number":number, "position":position}); //Calls onPlayerSubmit method, which is fed into it when ScoreBook is rendered. onPlayerSubmit is set to be ScoreBook's handlePlayerSubmit method.
       React.findDOMNode(this.refs.name).value = ''; //Resets author
       React.findDOMNode(this.refs.number).value = ''; //Resets text
       React.findDOMNode(this.refs.position).value = '';
@@ -118,14 +124,11 @@
       var rawMarkup1 = marked(this.props.number.toString(), {sanitize: true});
       var rawMarkup2 = marked(this.props.position.toString(), {sanitize: true});
       return (
-        <div className="player">
-          <table style = "width:30%">
-          <tr>
+          <tr className="player">
             <td className = "playerName"> {this.props.name} {/*Displays player name*/} </td>
-            <td> <span dangerouslySetInnerHTML={{__html: rawMarkup1}} /> </td>
-            <td> <span dangerouslySetInnerHTML={{__html: rawMarkup2}} /> </td>
+            <td dangerouslySetInnerHTML={{__html: rawMarkup1}} />
+            <td dangerouslySetInnerHTML={{__html: rawMarkup2}} />
           </tr>
-        </div>
       );
     }
   });
