@@ -31,8 +31,13 @@
         handlePlayerSubmit: function(player) {
           //Optimistic update: displays new comment before saving it on server
           var players = this.state.data;
-          var newPlayers = players.concat([player]);
-          this.setState({data: newPlayers});
+          for (var i = 0; i <= players.length - 1; i++) {
+            if (player.batPosition < players[i].batPosition) {
+              players.splice(i,0,player);
+              break;
+            }
+          };
+          this.setState({data: players});
           //Call to server
           $.ajax({
           url: this.props.url,
@@ -97,13 +102,15 @@
         var name = React.findDOMNode(this.refs.name).value.trim(); //Gets author from user input
         var number = React.findDOMNode(this.refs.number).value.trim(); //Gets text from user input
         var position = React.findDOMNode(this.refs.position).value.trim();
-       if (!name || !number || !position) {
+        var batPosition = React.findDOMNode(this.refs.batPosition).value.trim();
+       if (!name || !number || !position || !batPosition) {
           return;
         }
-      this.props.onPlayerSubmit({"name":name, "number":number, "position":position}); //Calls onPlayerSubmit method, which is fed into it when ScoreBook is rendered. onPlayerSubmit is set to be ScoreBook's handlePlayerSubmit method.
+      this.props.onPlayerSubmit({"name":name, "number":number, "position":position, "batPosition": batPosition}); //Calls onPlayerSubmit method, which is fed into it when ScoreBook is rendered. onPlayerSubmit is set to be ScoreBook's handlePlayerSubmit method.
       React.findDOMNode(this.refs.name).value = ''; //Resets author
       React.findDOMNode(this.refs.number).value = ''; //Resets text
       React.findDOMNode(this.refs.position).value = '';
+      React.findDOMNode(this.refs.batPosition).value = '';
       return;
     },
     render: function() {
@@ -111,7 +118,8 @@
       <form className="playerForm" onSubmit={this.handleSubmit}>
         <input type="text" placeholder="Player name" ref="name" />
         <input type="text" placeholder="Number" ref="number" />
-        <input type="text" placeholder="Position" ref="position" />
+        <input type="text" placeholder="Fielding position" ref="position" />
+        <input type="text" placeholder="Batting position" ref="batPosition" />
         <input type="submit" value="Post" />
       </form>
       );
@@ -120,6 +128,7 @@
     
   //Has two properties: author, which stores comment author, and children, which stores the message.
   var Player = React.createClass({
+    //@props: number, position, name
     render: function() {
       var rawMarkup1 = marked(this.props.number.toString(), {sanitize: true});
       var rawMarkup2 = marked(this.props.position.toString(), {sanitize: true});

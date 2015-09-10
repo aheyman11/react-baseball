@@ -2,41 +2,55 @@
     {
         "name": "Span",
         "number": "2",
-        "position": "CF"
+        "position": "CF",
+        "batPosition": "1"
     },
     {
         "name": "Escobar",
         "number": "5",
-        "position": "3B"
+        "position": "3B",
+        "batPosition": "2"
     },
     {
         "name": "Harper",
         "number": "34",
-        "position": "RF"
+        "position": "RF",
+        "batPosition": "3"
     },
     {
         "name": "Rendon",
         "number": "6",
-        "position": "2B"
+        "position": "2B",
+        "batPosition": "4"
     },
     {
         "name": "Ramos",
         "number": "40",
-        "position": "C"
+        "position": "C",
+        "batPosition": "5"
     },
     {
         "name": "Desmond",
         "number": "20",
-        "position": "SS"
+        "position": "SS",
+        "batPosition": "6"
     },
     {
         "name": "Moore",
         "number": "12",
-        "position": "1B"
+        "position": "1B",
+        "batPosition": "7"
     },
     {
         "name": "Taylor",
         "number": "3",
-        "position": "LF"
+        "position": "LF",
+        "batPosition": "8"
+    },
+    {
+        "name": "Espinosa",
+        "number": "8",
+        "position": "2B/SS/3B/LF",
+        "batPosition": "9"
     }
 ]

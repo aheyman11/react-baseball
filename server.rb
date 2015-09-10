@@ -28,7 +28,12 @@ server.mount_proc '/players.json' do |req, res|
     req.query.each do |key, value|
       player[key] = value.force_encoding('UTF-8')
     end
-    players << player
+    players.each_with_index do |elt, index|
+      if player["batPosition"] < elt["batPosition"]
+        players.insert(index, player)
+        break
+      end
+    end
     File.write('./players.json', JSON.pretty_generate(players, :indent => '    '))
   end
 
