@@ -88,7 +88,16 @@
         });
       return (
         <div className="playerList"> <table >
-          {playerNodes} {/* Displays all comments */}
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Number</th>
+                <th>Position</th>
+              </tr>
+            </thead>
+            <tbody>
+              {playerNodes} {/* Displays all comments */}
+            </tbody>
         </table> </div>
         );
     }
